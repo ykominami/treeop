@@ -11,7 +11,7 @@ class SlickX {
 	self.upbtn = upbtn;
 	self.downbtn = downbtn;
 	self.acinput = acinput;
-	
+
 	//    var s;
 	self.text_// FIXME: eld = search_field;
 	self.score = score;
@@ -34,15 +34,15 @@ class SlickX {
 	    autoEdit: false,
 	    //	editCommandHandler: queueAndExecuteCommand
 	};
-	
+
 	self.loadingIndicator = null;
-	
+
 	self.dataView = new Slick.Data.DataView();
-	
+
 	self.loader = new Slick.Data.RemoteModel( items_count_url , items_url , add_item_url , delete_item_url );
-	
+
 	console.log( self.loader.data );
-	
+
 	self.dataView.setItems(self.loader.data);
 	self.dataView.onRowCountChanged.subscribe(function (e, args) {
 	    console.log("onRowCountChanged");
@@ -67,7 +67,7 @@ class SlickX {
 	    console.log("name=" + item["name"]);
 	    console.log("desc=" + item["desc"]);
 	    console.log("url=" + item["url"]);
-	    
+
 	    console.log("onAddNewRow 2");
 	    self.grid.invalidateRow(self.loader.data.length);
 	    if( name == null ){
@@ -142,7 +142,7 @@ class SlickX {
 		childWindow = null;
 	    }
 	});
-	
+
 	self.loader.onDataLoading.subscribe(function () {
 	    console.log("onDataLoading");
             if (!self.loadingIndicator) {
@@ -159,7 +159,7 @@ class SlickX {
 	self.loader.onDataLoaded.subscribe(function (e, args) {
 	    console.log("onDataLoaded");
 	    self.dataView.setItems(self.loader.data);
-	    /*	
+	    /*
 		for (var i = args.from; i <= args.to; i++) {
 		self.grid.invalidateRow(i);
 		}
@@ -194,19 +194,19 @@ class SlickX {
 	self.loader.onDeleteBookmarkDataLoaded.subscribe(function (e, args) {
 	    console.log( "onDeleteBookmarkDataLoaded=" + args.id );
 	});
-	
+
 	$( self.text_field ).keyup(function (e) {
             if (e.which == 13) {
 		self.do_search( $(this).val() );
             }
 	});
-	
+
 	self.loader.setSearch($( self.text_field ).val() );
 	self.loader.setSort( self.score , -1 );
 	self.grid.setSortColumn( self.score , false );
 	// load the first page
 	//    self.grid.onViewportChanged.notify();
-	
+
 	$( self.upbtn ).click( function() {
 	    self.page_num = self.page_num + 1;
 	    var category_id = $("#txtSearch").val( );
@@ -219,7 +219,7 @@ class SlickX {
 	    var category_id = $("#txtSearch").val( );
 	    do_search( category_id );
 	} );
-	
+
 	// AutoComplete
 	$( self.acinput ) . autocomplete( {
             source: function( request, res ){
@@ -265,23 +265,23 @@ class SlickX {
 	console.log( "to=" + to );
 	this.loader.getDataCount();
     }
-    
+
     do_search( category_id ) {
 	$( this.text_field ).val( category_id );
 	this.loader.setSearch( category_id );
 	this.redraw_viewport();
 	//    redraw_viewport();
-    }    
+    }
 }
-    
-class Jst {    
+
+class Jst {
     constructor( slickx , search_field , category_url ){
 	var self = this;
 	this.slickx = slickx;
 	this.search_field  = search_field;
-	
+
 	this.to = false;
-	
+
 	this.jst = $("#jstree").jstree({
 	    'core' : {
 		'check_callback' : function( operation , node, node_parent, node_position, more ) {
@@ -305,12 +305,12 @@ class Jst {
 		    'stripes' : true,
 		    'responsive' : true
 		},
-		
+
 		"data": {
 		    "url" : category_url,
 		    'dataType' : "json"
 		},
-		
+
 		"state" : { "key" : "git-git" },
 		"plugins" : [ "dnd" , "contextmenu" , "search" , "state" , "wholerow" ]
 	    }
@@ -328,17 +328,17 @@ class Jst {
 		self.slickx.do_search( category_id );
 	    }
 	});
-	
+
 	this.jst.on( 'move_node.jstree', function(e, n) {
 	    console.log( "# move_node" );
 	    console.log( "n.parent=" + n.parent );
-	    console.log( "n.position=" + n.position );	
+	    console.log( "n.position=" + n.position );
 	    console.log( "n.old_parent=" + n.old_parent );
 	    console.log( "n.old_position=" + n.old_position );
 	    console.log( "n.is_multi=" + n.multi );
 	}
-		   );
-	
+	);
+
 	this.jst.on( 'dnd_scroll.vakata' , function(node) {
 	    console.log( "dnd_scroll.vakata" );
 	});
@@ -348,7 +348,7 @@ class Jst {
 	this.jst.on( 'dnd_move.vakata' , function(node) {
 	    console.log( "dnd_move.vakata" );
 	});
-    
+
 	$(document).on( 'dnd_end.vakata' , function(node) {
 	    console.log( "dnd_end.vakata" );
 	});
@@ -379,7 +379,7 @@ class Jst {
 	this.jst.on( 'edit.jstree' , function(node) {
 	    console.log( "edit" );
 	});
-	
+
 	$( // TODO:
 	    this.search_field ).keyup(function ()
 	    {
@@ -402,6 +402,6 @@ $(document).ready(function(){
 //    var jst = new Jst( slickx , '#category-search' , '/xml/categories.json/2' );
     var jst = new Jst( slickx , '#category-search' , '/xml/categories.json' );
 //    var jst = new Jst( slickx , '#category-search' , '/xml/c.json/' );
-    
+
     console.log( slickx.search_field );
 });
