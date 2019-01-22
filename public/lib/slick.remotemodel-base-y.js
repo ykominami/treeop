@@ -181,13 +181,13 @@
 		}
 
 		onError(fromPage, toPage) {
-			alert("Base:error loading pages " + fromPage + " to " + toPage);
+			alert("remotemodel-base:onError:error loading pages " + fromPage + " to " + toPage);
 		}
 
 		onSuccess(json, recStart) {}
 
 		onErrorCount() {
-			alert("Base:error loading pages ");
+			alert("remotemodel-base:onErrorCount:error loading ");
 		}
 
 		onSuccessCount(json) {
