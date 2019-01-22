@@ -428,7 +428,18 @@ class Jst {
 }
 
 $(document).ready(function () {
-	var slickx = new SlickX("#txtSearch", "#myGrid", "score", '#upbtn', '#downbtn', '#jquery-ui-autocomplete-input', '/xml/bookmarks_count', '/xml/bookmarks', '/xml/add_bookmark', '/xml/delete_bookmark');
+	var slickx = new SlickX(
+		"#txtSearch", 
+		"#myGrid", 
+		"score", 
+		'#upbtn', 
+		'#downbtn', 
+		'#jquery-ui-autocomplete-input', 
+		'/xml/bookmarks_count', 
+		'/xml/bookmarks', 
+		'/xml/add_bookmark', 
+		'/xml/delete_bookmark'
+		);
 	// 'http://localhost:4567/xml/repos'
 
 	//    var jst = new Jst( slickx , '#category-search' , '/xml/categories.json/2' );
