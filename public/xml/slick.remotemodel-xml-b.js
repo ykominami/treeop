@@ -141,7 +141,7 @@
 		for (var i = 0; i < results.length; i++) {
 		    console.log("i=" + i);
 		    var item = results[i];
-		    
+
 		    this.data[i] = { index: i };
 		    this.data[i].original_id = item.original_id
 		    this.data[i].id = item.id
@@ -198,7 +198,7 @@
 	initialize( id , name , desc , url , add_date ) {
 	    var super_inst = this.super_.initialize( id , name , desc , url , add_date );
 	    super_inst.data_count = [];
-	    
+
 	    return super_inst;
 	}
     }
@@ -213,4 +213,4 @@
     });
 
 })(jQuery);
-    
+
