@@ -2,29 +2,28 @@
 
 class SlickX {
 	constructor(search_field, sgrid, score, upbtn, downbtn, acinput, items_count_url, items_url, add_item_url, delete_item_url) {
-		var self = this;
-		self.selected_cell_row = null;
-		self.selectedRow = null;
-		self.search_field = search_field;
-		self.sgrid = sgrid;
-		self.score = score;
-		self.upbtn = upbtn;
-		self.downbtn = downbtn;
-		self.acinput = acinput;
+		this.selected_cell_row = null;
+		this.selectedRow = null;
+		this.search_field = search_field;
+		this.sgrid = sgrid;
+		this.score = score;
+		this.upbtn = upbtn;
+		this.downbtn = downbtn;
+		this.acinput = acinput;
 
 		//    var s;
-		self.text_ // FIXME: eld = search_field;
-		self.score = score;
-		self.page_num = 0;
-		self.page_size = 0;
-		self.columns = [
+		this.text_ // FIXME: eld = search_field;
+		this.score = score;
+		this.page_num = 0;
+		this.page_size = 0;
+		this.columns = [
 			//        {id: "mpn", name: "name", field: "name", formatter: mpnFormatter, width: 100, sortable: true },
 			//        {id: "id", name: "id", field: "id", formatter: brandFormatter, width: 100, sortable: true },
 			{
 				id: "name",
 				name: "name",
 				field: "name",
-				width: 300,
+				width: 200,
 				editor: Slick.Editors.Text
 			},
 			{
@@ -34,21 +33,28 @@ class SlickX {
 				width: 80
 			},
 			{
-				id: "desc",
-				name: "Description",
-				field: "desc",
-				width: 300,
-				editor: Slick.Editors.Text
-			},
-			{
 				id: "url",
 				name: "Url",
 				field: "url",
 				width: 300,
 				editor: Slick.Editors.Text
 			},
+			{
+				id: "title",
+				name: "書名",
+				field: "title",
+				width: 100,
+				editor: Slick.Editors.Text
+			},
+			{
+				id: "authors",
+				name: "著者",
+				field: "authors",
+				width: 100,
+				editor: Slick.Editors.Text
+			},
 		];
-		self.options = {
+		this.options = {
 			rowHeight: 21,
 			editable: true,
 			enableAddRow: true,
@@ -58,160 +64,130 @@ class SlickX {
 			//	editCommandHandler: queueAndExecuteCommand
 		};
 
-		self.loadingIndicator = null;
+		this.loadingIndicator = null;
 
-		self.dataView = new Slick.Data.DataView();
+		this.dataView = new Slick.Data.DataView();
 
-		self.loader = new Slick.Data.RemoteModel(items_count_url, items_url, add_item_url, delete_item_url);
+		this.loader = new Slick.Data.RemoteModel(items_count_url, items_url, add_item_url, delete_item_url);
 
-		console.log(self.loader.data);
+		this.grid = new Slick.Grid(this.sgrid, this.dataView, this.columns, this.options);
 
-		self.dataView.setItems(self.loader.data);
-		self.dataView.onRowCountChanged.subscribe(function (e, args) {
+		this.grid.setSelectionModel(new Slick.CellSelectionModel());
+
+		this.dataView.setItems(this.loader.data);
+		this.dataView.onRowCountChanged.subscribe((e, args) => {
 			console.log("onRowCountChanged");
-			self.grid.updateRowCount();
-			self.grid.render();
+			this.grid.updateRowCount();
+			this.grid.render();
 		});
-		self.dataView.onRowsChanged.subscribe(function (e, args) {
+		this.dataView.onRowsChanged.subscribe((e, args) => {
 			console.log("onRowsChanged");
-			self.grid.invalidateRows(args.rows);
-			self.grid.render();
+			this.grid.invalidateRows(args.rows);
+			this.grid.render();
 		});
 
-		self.grid = new Slick.Grid(self.sgrid, self.dataView, self.columns, self.options);
 
-		self.grid.setSelectionModel(new Slick.CellSelectionModel());
-
-		function updateRow(item) {
-			var name = item["name"];
-			var desc = item["desc"];
-			var url = item["url"];
-			console.log("id=" + item["id"]);
-			console.log("name=" + item["name"]);
-			console.log("desc=" + item["desc"]);
-			console.log("url=" + item["url"]);
-
-			console.log("onAddNewRow 2");
-			self.grid.invalidateRow(self.loader.data.length);
-			if (name == null) {
-				name = "";
-			}
-			if (desc == null) {
-				desc = "";
-			}
-			if (url == null) {
-				url = "";
-			}
-			if (item["id"] === void 0) {
-				self.loader.addData("", name, desc, url, Math.trunc(Date.now() / 1000));
-			} else {
-				self.dataView.addItem(item);
-				self.dataView.syncGridSelection(self.grid, true, true);
-				self.grid.updateRowCount();
-				self.grid.render();
-				self.loader.addData(item["id"], name, desc, url, Math.trunc(Date.now() / 1000));
-			}
-		}
-
-		self.grid.onAddNewRow.subscribe(function (e, args) {
+		this.grid.onAddNewRow.subscribe((e, args) => {
 			console.log("onAddNewRow");
-			updateRow(args.item);
+			this.updateRow(args.item);
 		});
-		self.grid.onCellChange.subscribe(function (e, args) {
+		this.grid.onCellChange.subscribe((e, args) => {
 			console.log("onCellChange");
 		});
-		self.grid.onSelectedRowsChanged.subscribe(function (e) {
+		this.grid.onSelectedRowsChanged.subscribe((e) => {
 			console.log("onSelectedRowsChanged");
 		});
-		self.grid.onContextMenu.subscribe(function (e) {
+		this.grid.onContextMenu.subscribe((e) => {
 			console.log("onContextMenu");
 			console.log(e.pageY);
 			console.log(e.pageX);
 			e.preventDefault();
-			var selected_cell = self.grid.getCellFromEvent(e);
-			self.selected_cell_row = selected_cell.row;
-			//	    var selectedRowIds = self.dataView.mapRowsToIds(self.grid.getSelectedRows());
-			var selectedRowIds = self.dataView.mapRowsToIds([selected_cell.row]);
-			self.selectedRow = selectedRowIds[0];
+			const selected_cell = this.grid.getCellFromEvent(e);
+			this.selected_cell_row = selected_cell.row;
+			//	    var selectedRowIds = this.dataView.mapRowsToIds(this.grid.getSelectedRows());
+			const selectedRowIds = this.dataView.mapRowsToIds([selected_cell.row]);
+			this.selectedRow = selectedRowIds[0];
 			$("#contextMenu")
 				.css("top", e.pageY)
 				.css("left", e.pageX)
 				.show();
-			$("body").one("click", function () {
+			$("body").one("click", () => {
 				$("#contextMenu").hide();
 			});
 		});
 
-		$("#contextMenu").click(function (e) {
+		$("#contextMenu").click((e) => {
 			if (!$(e.target).is("li")) {
 				return;
 			}
-			if (!self.grid.getEditorLock().commitCurrentEdit()) {
+			if (!this.grid.getEditorLock().commitCurrentEdit()) {
 				return;
 			}
 			console.log(e.target.id);
 			if (e.target.id == "Delete") {
-				console.log(self.selectedRow);
-				self.data = self.dataView.getItem(self.selected_cell_row);
-				self.dataView.deleteItem(self.selectedRow);
-				self.loader.deleteData(self.data.id);
+				console.log(this.selectedRow);
+				this.data = this.dataView.getItem(this.selected_cell_row);
+				this.dataView.deleteItem(this.selectedRow);
+				this.loader.deleteData(this.data.id);
 			} else if (e.target.id == "Open") {
-				console.log(self.selectedRow);
-				self.data = self.dataView.getItem(self.selected_cell_row);
-				var childWindow = window.open('about:blank');
-				childWindow.location.href = self.data.url;
+				console.log(this.selectedRow);
+				this.data = this.dataView.getItem(this.selected_cell_row);
+				const childWindow = window.open('about:blank');
+				childWindow.location.href = this.data.url;
 				childWindow = null;
 			}
 		});
 
-		self.loader.onDataLoading.subscribe(function () {
+		this.loader.onDataLoading.subscribe(() => {
 			console.log("onDataLoading");
-			if (!self.loadingIndicator) {
-				self.loadingIndicator = $("<span class='loading-indicator'><label>Buffering...</label></span>").appendTo(document.body);
-				var $g = $(sgrid);
-				self.loadingIndicator
+			if (!this.loadingIndicator) {
+				this.loadingIndicator = $("<span class='loading-indicator'><label>Buffering...</label></span>").appendTo(document.body);
+				const $g = $(sgrid);
+				this.loadingIndicator
 					.css("position", "absolute")
-					.css("top", $g.position().top + $g.height() / 2 - self.loadingIndicator.height() / 2)
-					.css("left", $g.position().left + $g.width() / 2 - self.loadingIndicator.width() / 2);
+					.css("top", $g.position().top + $g.height() / 2 - this.loadingIndicator.height() / 2)
+					.css("left", $g.position().left + $g.width() / 2 - this.loadingIndicator.width() / 2);
 			}
-			self.loadingIndicator.show();
+			this.loadingIndicator.show();
 		});
 
-		self.loader.onDataLoaded.subscribe(function (e, args) {
+		this.loader.onDataLoaded.subscribe((e, args) => {
 			console.log("onDataLoaded");
-			self.dataView.setItems(self.loader.data);
+			this.dataView.setItems(this.loader.data);
 			/*
 		for (var i = args.from; i <= args.to; i++) {
-		self.grid.invalidateRow(i);
+		this.grid.invalidateRow(i);
 		}
-		self.grid.updateRowCount();
-		self.grid.render();
+		this.grid.updateRowCount();
+		this.grid.render();
 	    */
-			self.loadingIndicator.fadeOut();
+			this.loadingIndicator.fadeOut();
 		});
-		self.loader.onCountDataLoaded.subscribe(function (e, args) {
+		this.loader.onCountDataLoaded.subscribe((e, args) => {
 			console.log("onCountDataLoaded=" + args.count);
-			self.loader.ensureData(0, args.count);
+			this.loader.ensureData(0, args.count);
 		});
-		self.loader.onAddBookmarkDataLoaded.subscribe(function (e, args) {
+		this.loader.onAddBookmarkDataLoaded.subscribe((e, args) => {
 			console.log("onAddBookmarkDataLoaded=" + args.original_id);
-			//            self.loader.ensureData( 0 , args.length);
+			//            this.loader.ensureData( 0 , args.length);
 			if (args.original_id == "") {
 				console.log("onAddBookmarkDataLoaded 1 =" + args.original_id);
-				self.dataView.addItem({
+				this.dataView.addItem({
 					"id": args["id"],
 					"name": args["name"],
-					"desc": args["desc"],
+					"title": args["title"],
+					"authors": args["authors"],
 					"url": args["url"]
 				});
 			} else {
 				if (args.original_id != args.id) {
 					console.log("onAddBookmarkDataLoaded 21 =" + args.original_id);
-					self.dataView.deleteItem(args.original_id);
-					self.dataView.addItem({
+					this.dataView.deleteItem(args.original_id);
+					this.dataView.addItem({
 						"id": args["id"],
 						"name": args["name"],
-						"desc": args["desc"],
+						"title": args["title"],
+						"authors": args["authors"],
 						"url": args["url"]
 					});
 				} else {
@@ -220,38 +196,48 @@ class SlickX {
 			}
 		});
 
-		self.loader.onDeleteBookmarkDataLoaded.subscribe(function (e, args) {
+		this.loader.onDeleteBookmarkDataLoaded.subscribe((e, args) => {
 			console.log("onDeleteBookmarkDataLoaded=" + args.id);
 		});
 
-		$(self.text_field).keyup(function (e) {
+		$(this.text_field).keyup((e) => {
+			// pushed Enter key
 			if (e.which == 13) {
-				self.do_search($(this).val());
+				//				this.do_search($(this).val());
+				const kv = $(this.text_field).val()
+				console.log("Call do_search|this.text_field=" + kv)
+				this.do_search(kv);
 			}
 		});
-
-		self.loader.setSearch($(self.text_field).val());
-		self.loader.setSort(self.score, -1);
-		self.grid.setSortColumn(self.score, false);
+		let kv = $(this.text_field).val()
+		if (typeof kv === 'undefined') {
+			kv = "";
+		}
+		console.log("kv=" + kv)
+		this.loader.setSearch(kv);
+		this.loader.setSort(this.score, -1);
+		this.grid.setSortColumn(this.score, false);
 		// load the first page
-		//    self.grid.onViewportChanged.notify();
+		//    this.grid.onViewportChanged.notify();
 
-		$(self.upbtn).click(function () {
-			self.page_num = self.page_num + 1;
-			var category_id = $("#txtSearch").val();
+		$(this.upbtn).click(() => {
+			this.page_num = this.page_num + 1;
+			const category_id = $("#txtSearch").val();
+			console.log("this.upbtn call do_search category_id=" + category_id)
 			do_search(category_id);
 		});
-		$(self.downbtn).click(function () {
-			if (self.page_num > 0) {
-				self.page_num = self.page_num - 1;
+		$(this.downbtn).click(() => {
+			if (this.page_num > 0) {
+				this.page_num = this.page_num - 1;
 			}
-			var category_id = $("#txtSearch").val();
+			const category_id = $("#txtSearch").val();
+			console.log("this.downbtn call do_search category_id=" + category_id)
 			do_search(category_id);
 		});
 
 		// AutoComplete
-		$(self.acinput).autocomplete({
-				source: function (request, res) {
+		$(this.acinput).autocomplete({
+				source: (request, res) => {
 					$.ajax({
 						url: "/xml/api",
 						type: "POST",
@@ -260,44 +246,83 @@ class SlickX {
 						data: {
 							q: request.term
 						},
-						success: function (o) {
+						success: (o) => {
 							res(o);
 						},
-						error: function (xhr, ts, err) {
+						error: (xhr, ts, err) => {
 							res(['']);
 						}
 					});
 				},
-				search: function (event, ui) {
+				search: (event, ui) => {
 					if (event.keyCode == 229) return false;
 					return true;
 				},
-				open: function () {
+				open: () => {
 					$(this).removeClass("ui-corner-all");
 				}
 			})
-			.keyup(function (event) {
+			.keyup((event) => {
 				if (event.keyCode == 13) {
 					$(this).autocomplete('#jquery-ui-autocomplete-input');
 				}
 			});
 	}
 
+
+	updateRow(item) {
+		const name = item["name"];
+		const url = item["url"];
+		const title = item["title"];
+		const authors = item["authors"];
+		console.log("id=" + item["id"]);
+		console.log("name=" + item["name"]);
+		console.log("url=" + item["url"]);
+		console.log("title=" + item["title"]);
+		console.log("authors=" + item["authors"]);
+
+		console.log("onAddNewRow 2");
+		this.grid.invalidateRow(this.loader.data.length);
+		if (name == null) {
+			name = "";
+		}
+		if (url == null) {
+			url = "";
+		}
+		if (title == null) {
+			title = "";
+		}
+		if (authors == null) {
+			authors = "";
+		}
+		if (item["id"] === void 0) {
+			this.loader.addData("", name, url, title, authors, Math.trunc(Date.now() / 1000));
+		} else {
+			this.dataView.addItem(item);
+			this.dataView.syncGridSelection(this.grid, true, true);
+			this.grid.updateRowCount();
+			this.grid.render();
+			this.loader.addData(item["id"], name, url, title, authors, Math.trunc(Date.now() / 1000));
+		}
+	}
+
 	redraw_viewport() {
-		var vp = this.grid.getViewport();
-		var from = vp.top;
-		var to = vp.bottom;
+		const vp = this.grid.getViewport();
+		const from = vp.top;
+		const to = vp.bottom;
 		if (this.page_size == 0) {
 			this.page_size = to - from + 1;
 		}
-		from = 0;
-		to = (this.page_size * (this.page_num + 1));
-		console.log("from=" + from);
-		console.log("to=" + to);
+		const fromx = 0;
+		const tox = (this.page_size * (this.page_num + 1));
+		console.log("fromx=" + fromx);
+		console.log("tox=" + tox);
 		this.loader.getDataCount();
 	}
 
 	do_search(category_id) {
+		console.log("do_search category_id=" + category_id)
+		console.log("do_search this.loader=" + this.loader)
 		$(this.text_field).val(category_id);
 		this.loader.setSearch(category_id);
 		this.redraw_viewport();
@@ -307,7 +332,6 @@ class SlickX {
 
 class Jst {
 	constructor(slickx, search_field, category_url) {
-		var self = this;
 		this.slickx = slickx;
 		this.search_field = search_field;
 
@@ -315,7 +339,7 @@ class Jst {
 
 		this.jst = $("#jstree").jstree({
 			'core': {
-				'check_callback': function (operation, node, node_parent, node_position, more) {
+				'check_callback': (operation, node, node_parent, node_position, more) => {
 					// operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
 					// in case of 'rename_node' node_position is filled with the new node name
 					//	return operation === 'rename_node' ? true : false;
@@ -324,7 +348,7 @@ class Jst {
 					return ret;
 				},
 				'multiple': false,
-				'error': function () {
+				'error': () => {
 					console.log("error");
 				},
 				'themes': {
@@ -348,21 +372,24 @@ class Jst {
 				"plugins": ["dnd", "contextmenu", "search", "state", "wholerow"]
 			}
 		});
-		this.jst.on('select_node.jstree', function (e, data) {
+		this.jst.on('select_node.jstree', (e, data) => {
 			console.log("select_node");
+			/*
 			var node = data.instance.get_node(data.selected[0])
 			var path = data.instance.get_path(data.selected[0], '/', false);
 			var next_dom = data.instance.get_next_dom(data.selected[0], true);
 			var prev_dom = data.instance.get_prev_dom(data.selected[0], true);
 			var json = data.instance.get_json(data.selected[0], true);
-			var inst = data.instance.get_node(data.selected[0])
+			*/
+			const inst = data.instance.get_node(data.selected[0])
 			if (inst !== null) {
-				var category_id = inst.id;
-				self.slickx.do_search(category_id);
+				const category_id = inst.id;
+				console.log("on select_node.jstree category_id= " + category_id)
+				this.slickx.do_search(category_id);
 			}
 		});
 
-		this.jst.on('move_node.jstree', function (e, n) {
+		this.jst.on('move_node.jstree', (e, n) => {
 			console.log("# move_node");
 			console.log("n.parent=" + n.parent);
 			console.log("n.position=" + n.position);
@@ -371,80 +398,83 @@ class Jst {
 			console.log("n.is_multi=" + n.multi);
 		});
 
-		this.jst.on('dnd_scroll.vakata', function (node) {
+		this.jst.on('dnd_scroll.vakata', (node) => {
 			console.log("dnd_scroll.vakata");
 		});
-		this.jst.on('dnd_start.vakata', function (node) {
+		this.jst.on('dnd_start.vakata', (node) => {
 			console.log("dnd_start.vakata");
 		});
-		this.jst.on('dnd_move.vakata', function (node) {
+		this.jst.on('dnd_move.vakata', (node) => {
 			console.log("dnd_move.vakata");
 		});
 
-		$(document).on('dnd_end.vakata', function (node) {
+		$(document).on('dnd_end.vakata', (node) => {
 			console.log("dnd_end.vakata");
 		});
-		this.jst.on('model.jstree', function (nodes, parent) {
+		this.jst.on('model.jstree', (nodes, parent) => {
 			console.log("model");
 		});
-		this.jst.on('activate_node.jstree', function (node) {
+		this.jst.on('activate_node.jstree', (node) => {
 			console.log("active_node");
 		});
-		this.jst.on('copy_node.jstree', function (node) {
+		this.jst.on('copy_node.jstree', (node) => {
 			console.log("copy_node");
 		});
-		this.jst.on('changed.jstree', function (node, action, selected, event) {
+		this.jst.on('changed.jstree', (node, action, selected, event) => {
 			console.log("changed");
 		});
-		this.jst.on('deselect_node.jstree', function (node, selected, event) {
+		this.jst.on('deselect_node.jstree', (node, selected, event) => {
 			console.log("deselect_node");
 		});
-		this.jst.on('cut.jstree', function (node) {
+		this.jst.on('cut.jstree', (node) => {
 			console.log("cut");
 		});
-		this.jst.on('copy.jstree', function (node) {
+		this.jst.on('copy.jstree', (node) => {
 			console.log("copy");
 		});
-		this.jst.on('paste.jstree', function (node) {
+		this.jst.on('paste.jstree', (node) => {
 			console.log("paste");
 		});
-		this.jst.on('edit.jstree', function (node) {
+		this.jst.on('edit.jstree', (node) => {
 			console.log("edit");
 		});
 
 		$( // TODO:
-			this.search_field).keyup(function () {
+			this.search_field).keyup(() => {
 			if (this.to) {
-				clearTimeout(to);
+				clearTimeout(this.to);
 			}
-			this.to = setTimeout(function () {
-				var v = $('#category-search').val();
+			this.to = setTimeout(() => {
+				let v = $('#category-search').val();
 				//console.log( v );
 				// console.log( jst );
+				if (typeof v === 'undefined') {
+					v = "0";
+				}
 				$('#jstree').jstree(true).search(v);
 			}, 250);
 		});
 	}
 }
 
-$(document).ready(function () {
-	var slickx = new SlickX(
-		"#txtSearch", 
-		"#myGrid", 
-		"score", 
-		'#upbtn', 
-		'#downbtn', 
-		'#jquery-ui-autocomplete-input', 
-		'/xml/bookmarks_count', 
-		'/xml/bookmarks', 
-		'/xml/add_bookmark', 
-		'/xml/delete_bookmark'
-		);
+$(document).ready(() => {
+	const slickx = new SlickX(
+		"#txtSearch",
+		"#myGrid",
+		"score",
+		'#upbtn',
+		'#downbtn',
+		'#jquery-ui-autocomplete-input',
+		'http://localhost:4567/xml/bookmarks_count',
+		'http://localhost:4567/xml/bookmarks',
+		'http://localhost:4567/xml/add_bookmark',
+		'http://localhost:4567/xml/delete_bookmark'
+	);
 	// 'http://localhost:4567/xml/repos'
 
 	//    var jst = new Jst( slickx , '#category-search' , '/xml/categories.json/2' );
-	var jst = new Jst(slickx, '#category-search', '/xml/categories.json');
+	const jst = new Jst(slickx, '#category-search', '/xml/categories.json');
 	//    var jst = new Jst( slickx , '#category-search' , '/xml/c.json/' );
 
-	console.log(slickx.search_field);
+	console.log("slickx.search_field=" + slickx.search_field);
 });
