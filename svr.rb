@@ -52,19 +52,6 @@ get '/xml/c.json/' do
   data
 end
 
-get '/xml/categories.json/:kind' do
-  kind = params[:kind]
-  if kind
-    kind_num = kind.to_i
-  else
-    kind_num = 0
-  end
-  data = @xml.get_categories_by_json
-  
-  headers "Content-Type" => "application/json"
-  data
-end
-
 get '/xml/categories.json/2' do
   @xml.move( 2, 116 )
   data = @xml.get_categories_by_json
@@ -76,6 +63,33 @@ get '/xml/categories.json' do
   data = @xml.get_categories_by_json
   headers "Content-Type" => "application/json"
   data
+end
+
+get '/xml/bookmarks_count' do
+  category_id = params[:category_id]
+  callback_name = params[:callback]
+  path = params[:path]
+  headers "Content-Type" => "application/javascript"
+  data = %Q!#{callback_name}([ { "count" : 1 } ])!
+  data
+end
+
+get '/xml/bookmarks' do
+  category_id = params[:category_id]
+  callback_name = params[:callback]
+  path = params[:path]
+  headers "Content-Type" => "application/javascript"
+  data = %Q![ 
+    { "id" : 1 , "name" : "northern-cross.info" , "title":"nci", "authors" : "清水川貴之" , "url" : "http://northern-cross.info"} ,
+    { "id" : 2 , "name" : "northern-cross.net"  , "title":"ncn", "authors" : "小宮健" , "url" : "http://northern-cross.net"} 
+  ]!
+  %Q!#{callback_name}( #{data} )!
+end
+
+get '/xml/add_bookmark' do
+end
+
+get '/xml/delete_bookmark' do
 end
 
 get '/xml/1' do
@@ -90,6 +104,20 @@ get '/xml' do
   erb :index
 end
 
+=begin
+get '/xml/categories.json/:kind' do
+  kind = params[:kind]
+  if kind
+    kind_num = kind.to_i
+  else
+    kind_num = 0
+  end
+  data = @xml.get_categories_by_json
+  
+  headers "Content-Type" => "application/json"
+  data
+end
+=end
 __END__
 @@index
 
