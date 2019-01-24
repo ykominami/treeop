@@ -84,7 +84,7 @@
 				this.data_addbookmark = undefined;
 			}
 
-			var send_data = {
+			const send_data = {
 				id: id,
 				name: name,
 				url: encodeURIComponent(url),
@@ -137,7 +137,7 @@
 			console.log("json.length=" + json.length);
 			if (json.length > 0) {
 				//	if (json.count > 0) {
-				cost results = json
+				const results = json
 				this.data_addbookmark.length = results.length;
 				for (let i = 0; i < results.length; i++) {
 					console.log("i=" + i);
@@ -146,11 +146,13 @@
 					this.data[i] = {
 						index: i
 					};
+					Object.assign(this.data[i], item);
+					/*
 					this.data[i].original_id = item.original_id
 					this.data[i].id = item.id
 					this.data[i].name = item.name;
 					this.data[i].desc = item.desc;
-					this.data[i].url = item.url;
+					this.data[i].url = item.url;*/
 				}
 			}
 			this.req = null;
@@ -166,24 +168,25 @@
 			console.log("onSuccess");
 			console.log("json.length=" + json.length);
 			console.log("recStart=" + recStart);
-			const recEnd = recStart;
+			let recEnd = recStart;
 			if (json.length > 0) {
 				//	if (json.count > 0) {
-				const results = json
+				const results = json;
 				recEnd = recStart + results.length;
 				this.data.length = Math.min(recEnd, 1000);
-				for (var i = 0; i < results.length; i++) {
+				for (let i = 0; i < results.length; i++) {
 					console.log("i=" + i);
 					const item = results[i];
 
 					this.data[recStart + i] = {
 						index: recStart + i
 					};
-					this.data[recStart + i].id = item.id
+					Object.assign(this.data[recStart + i], item);
+/*					this.data[recStart + i].id = item.id
 					this.data[recStart + i].name = item.name;
 					this.data[recStart + i].title = item.title;
 					this.data[recStart + i].authors = item.authors;
-					this.data[recStart + i].url = item.url;
+					this.data[recStart + i].url = item.url;*/
 				}
 			}
 			this.req = null;
