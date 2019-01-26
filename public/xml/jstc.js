@@ -9,6 +9,7 @@ import {
 $(document).ready(() => {
 	const host = 'http://localhost:4567'
 	const slickx = new Slickx(
+		jQuery,
 		"#txtSearch",
 		"#myGrid",
 		"score",

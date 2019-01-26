@@ -1,5 +1,7 @@
 export const RemoteModelBase = class {
-    constructor(item_count_url, item_url, add_item_url, delete_item_url) {
+    constructor(jQuery, item_count_url, item_url, add_item_url, delete_item_url) {
+        this.jQuery = jQuery;
+        const $ = this.jQuery;
         // private
         this.PAGESIZE = 30;
         this.category_id = null;
@@ -29,7 +31,7 @@ export const RemoteModelBase = class {
         // initialize method
         this.init();
     }
-
+    // do nothing
     init() {}
 
     isDataLoaded(from, to) {
@@ -73,6 +75,8 @@ export const RemoteModelBase = class {
         }
         console.log("getDataCount:");
         this.h_request = setTimeout(() => {
+            const $ = this.jQuery;
+
             this.data_row[0] = null; // null indicates a 'requested but not available yet'
             console.log(`jsonp 2 ${url}`);
             this.req = $.jsonp({
@@ -157,6 +161,8 @@ export const RemoteModelBase = class {
             clearTimeout(this.h_request);
         }
         this.h_request = setTimeout(() => {
+            const $ = this.jQuery;
+
             for (let i = fromPage; i <= toPage; i++) {
                 this.data[i * this.PAGESIZE] = null; // null indicates a 'requested but not available yet'
             }
@@ -243,12 +249,3 @@ export const RemoteModelBase = class {
     }
 
 }
-
-// Slick.Data.RemoteModel
-$.extend(true, window, {
-    Slick: {
-        Data: {
-            RemoteModelBase: RemoteModelBase
-        }
-    }
-});

@@ -4,8 +4,8 @@ import {
 
 export const RemoteModel = class extends RemoteModelBase {
     //    class RemoteModel extends RemoteModelBase {
-    constructor(items_count_url, items_url, add_item_url, delete_item_url) {
-        super(items_count_url, items_url, add_item_url, delete_item_url);
+    constructor(jQuery, items_count_url, items_url, add_item_url, delete_item_url) {
+        super(jQuery, items_count_url, items_url, add_item_url, delete_item_url);
         this.data_count = [];
         this.data_addbookmark = [];
         this.data_deletebookmark = [];
@@ -16,6 +16,8 @@ export const RemoteModel = class extends RemoteModelBase {
     }
 
     deleteData(id) {
+        const $ = this.jQuery;
+
         console.log("deleteData");
         if (this.req) {
             this.req.abort();
@@ -76,6 +78,8 @@ export const RemoteModel = class extends RemoteModelBase {
     }
 
     addData(id, name, url, title, authors, add_date) {
+        const $ = this.jQuery;
+
         console.log("addData");
 
         if (this.category_id == null && this.path == null) {

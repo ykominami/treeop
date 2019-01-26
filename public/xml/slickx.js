@@ -3,7 +3,9 @@ import {
 } from './slick.remotemodel-xml.js';
 
 export const Slickx = class {
-    constructor(search_field, sgrid, score, upbtn, downbtn, acinput, host, item_count_url_path, item_url_path, add_item_url_path, delete_item_url_path) {
+    constructor(jQuery, search_field, sgrid, score, upbtn, downbtn, acinput, host, item_count_url_path, item_url_path, add_item_url_path, delete_item_url_path) {
+        this.jQuery = jQuery;
+        const $ = this.jQuery;
         this.selected_cell_row = null;
         this.selectedRow = null;
         this.search_field = search_field;
@@ -74,7 +76,7 @@ export const Slickx = class {
 
         this.dataView = new Slick.Data.DataView();
 
-        this.loader = new RemoteModel(item_count_url, item_url, add_item_url, delete_item_url);
+        this.loader = new RemoteModel($, item_count_url, item_url, add_item_url, delete_item_url);
 
         this.grid = new Slick.Grid(this.sgrid, this.dataView, this.columns, this.options);
 
@@ -178,6 +180,8 @@ export const Slickx = class {
     }
 
     set_grid_event_handler(){
+        const $ = this.jQuery;
+
         this.grid.onAddNewRow.subscribe((e, args) => {
             console.log("onAddNewRow");
             this.updateRow(args.item);
@@ -208,6 +212,7 @@ export const Slickx = class {
         });
     }
     set_btn_click_handler(){
+        const $ = this.jQuery;
         $(this.upbtn).click(() => {
             this.page_num = this.page_num + 1;
             const category_id = $("#txtSearch").val();
@@ -226,6 +231,8 @@ export const Slickx = class {
     }
 
     set_loader_event_handler( sgrid ){
+        const $ = this.jQuery;
+
         this.loader.onDataLoading.subscribe(() => {
             console.log("onDataLoading");
             if (!this.loadingIndicator) {
@@ -341,6 +348,8 @@ export const Slickx = class {
     }
 
     do_search(category_id) {
+        const $ = this.jQuery;
+
         console.log("do_search category_id=" + category_id)
         console.log("do_search this.loader=" + this.loader)
         $(this.text_field).val(category_id);
