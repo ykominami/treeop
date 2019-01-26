@@ -7,6 +7,7 @@ import {
 } from './jst.js';
 
 $(document).ready(() => {
+	const host = 'http://localhost:4567'
 	const slickx = new Slickx(
 		"#txtSearch",
 		"#myGrid",
@@ -14,16 +15,15 @@ $(document).ready(() => {
 		'#upbtn',
 		'#downbtn',
 		'#jquery-ui-autocomplete-input',
-		'http://localhost:4567/xml/bookmarks_count',
-		'http://localhost:4567/xml/bookmarks',
-		'http://localhost:4567/xml/add_bookmark',
-		'http://localhost:4567/xml/delete_bookmark'
+		host,
+		'/xml/bookmarks_count',
+		'/xml/bookmarks',
+		'/xml/add_bookmark',
+		'/xml/delete_bookmark'
 	);
-	// 'http://localhost:4567/xml/repos'
-
-	//    var jst = new Jst( slickx , '#category-search' , '/xml/categories.json/2' );
-	const jst = new Jst(slickx, '#category-search', '/xml/categories.json');
-	//    var jst = new Jst( slickx , '#category-search' , '/xml/c.json/' );
+	const category_url_path = '/xml/categories.json'
+	const category_url = `${host}${category_url_path}`
+	const jst = new Jst(slickx, '#category-search', category_url);
 
 	console.log("slickx.search_field=" + slickx.search_field);
 });
