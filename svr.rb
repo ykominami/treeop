@@ -65,6 +65,14 @@ get '/xml/categories.json' do
   data
 end
 
+get '/xml/bookmarks_count_json' do
+  category_id = params[:category_id]
+  callback_name = params[:callback]
+  path = params[:path]
+  headers "Content-Type" => "application/json"
+  data = %Q![ { "count" : 1 } ]!
+  data
+end
 get '/xml/bookmarks_count' do
   category_id = params[:category_id]
   callback_name = params[:callback]
@@ -72,6 +80,17 @@ get '/xml/bookmarks_count' do
   headers "Content-Type" => "application/javascript"
   data = %Q!#{callback_name}([ { "count" : 1 } ])!
   data
+end
+
+get '/xml/bookmarks_json' do
+  category_id = params[:category_id]
+  path = params[:path]
+  headers "Content-Type" => "application/json"
+  data = %Q![ 
+    { "id" : 1 , "name" : "northern-cross.info" , "title":"nci", "authors" : "清水川貴之" , "url" : "http://northern-cross.info"} ,
+    { "id" : 2 , "name" : "northern-cross.net"  , "title":"ncn", "authors" : "小宮健" , "url" : "http://northern-cross.net"} 
+  ]!
+  %Q!#{data}!
 end
 
 get '/xml/bookmarks' do
@@ -120,19 +139,6 @@ end
 =end
 __END__
 @@index
-
-<!DOCTYPE html>
-          <html>
-          <head>
-          <meta charset="UTF-8">
-                        <title>Inline template</title>
-</head>
-                                      <body>
-                                      <h1>Worked!</h1>
-</body>
-                                      </html>
-
-@@index
 <!DOCTYPE html>
 <html>
   <head>
@@ -150,6 +156,20 @@ __END__
     <div id="boxA">
       <div id="jstree"></div>
     </div>
+    <button id="clear" value="clear">clear</button>
+    <button id="btn2" value="2">2</button>
+    <button id="btn3" value="3">3</button>
+    <button id="btn4" value="4">4</button>
+    <button id="btn5" value="5">5</button>
+    <p></p>
+
+  </body>
+</html>
+
+@@jsondata
+    jsonDataX = <%= @jsonDataX %>
+
+ </div>
     <button id="clear" value="clear">clear</button>
     <button id="btn2" value="2">2</button>
     <button id="btn3" value="3">3</button>
