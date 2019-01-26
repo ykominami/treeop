@@ -40,6 +40,27 @@ export const Jst = class {
                 "plugins": ["dnd", "contextmenu", "search", "state", "wholerow"]
             }
         });
+
+        this.set_jst_on();
+
+        $( // TODO:
+            this.search_field).keyup(() => {
+            if (this.to) {
+                clearTimeout(this.to);
+            }
+            this.to = setTimeout(() => {
+                let v = $('#category-search').val();
+                //console.log( v );
+                // console.log( jst );
+                if (typeof v === 'undefined') {
+                    v = "0";
+                }
+                $('#jstree').jstree(true).search(v);
+            }, 250);
+        });
+    }
+
+    set_jst_on(){
         this.jst.on('select_node.jstree', (e, data) => {
             console.log("select_node");
             /*
@@ -105,22 +126,6 @@ export const Jst = class {
         });
         this.jst.on('edit.jstree', (node) => {
             console.log("edit");
-        });
-
-        $( // TODO:
-            this.search_field).keyup(() => {
-            if (this.to) {
-                clearTimeout(this.to);
-            }
-            this.to = setTimeout(() => {
-                let v = $('#category-search').val();
-                //console.log( v );
-                // console.log( jst );
-                if (typeof v === 'undefined') {
-                    v = "0";
-                }
-                $('#jstree').jstree(true).search(v);
-            }, 250);
         });
     }
 }
