@@ -23,7 +23,7 @@ $(document).ready(() => {
 	);
 	const category_url_path = '/xml/categories.json'
 	const category_url = `${host}${category_url_path}`
-	const jst = new Jst(slickx, '#category-search', category_url);
+	const jst = new Jst(jQuery, slickx, '#category-search', category_url);
 
 	console.log("slickx.search_field=" + slickx.search_field);
 });

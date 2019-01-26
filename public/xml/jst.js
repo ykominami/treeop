@@ -1,5 +1,8 @@
 export const Jst = class {
-    constructor(slickx, search_field, category_url) {
+    constructor(jQuery , slickx, search_field, category_url){
+        this.jQuery = jQuery;
+        const $ = this.jQuery;
+
         this.slickx = slickx;
         this.search_field = search_field;
 
