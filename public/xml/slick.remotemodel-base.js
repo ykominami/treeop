@@ -1,5 +1,5 @@
 export const RemoteModelBase = class {
-    constructor(items_count_url, items_url, add_item_url) {
+    constructor(item_count_url, item_url, add_item_url, delete_item_url) {
         // private
         this.PAGESIZE = 30;
         this.category_id = null;
@@ -21,9 +21,10 @@ export const RemoteModelBase = class {
         this.onCountDataLoaded = new Slick.Event();
 
         // variables
-        this.items_count_url = items_count_url;
-        this.items_url = items_url;
+        this.item_count_url = item_count_url;
+        this.item_url = item_url;
         this.add_item_url = add_item_url;
+        this.delete_item_url = delete_item_url;
 
         // initialize method
         this.init();
@@ -59,11 +60,11 @@ export const RemoteModelBase = class {
         console.log(`getDataCount path=${path}`)
         const int_val = parseInt(path, 10);
         if (isNaN(int_val)) {
-            url = `${this.items_count_url}?path=${path}`;
+            url = `${this.item_count_url}?path=${path}`;
             this.path = path;
             this.category_id = null;
         } else {
-            url = `${this.items_count_url}?category_id=${int_val}`;
+            url = `${this.item_count_url}?category_id=${int_val}`;
             this.path = null;
             this.category_id = int_val;
         }
@@ -150,7 +151,7 @@ export const RemoteModelBase = class {
             this.path = null;
             this.category_id = int_val;
         }
-        const url = `${this.items_url}?${part}&start=${recStart}&limit=${recCount}`;
+        const url = `${this.item_url}?${part}&start=${recStart}&limit=${recCount}`;
 
         if (this.h_request != null) {
             clearTimeout(this.h_request);
