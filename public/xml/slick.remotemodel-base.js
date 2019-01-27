@@ -14,8 +14,6 @@ export const RemoteModelBase = class {
         this.searchstr = "";
         this.sortcol = null;
         this.sortdir = 1;
-        this.h_request = null;
-        this.req = null; // ajax request
 
         // events
         this.onDataLoading = new Slick.Event();
@@ -34,6 +32,7 @@ export const RemoteModelBase = class {
     // do nothing
     init() {}
 
+    // 未利用のメソッド
     isDataLoaded(from, to) {
         for (let i = from; i <= to; i++) {
             if (this.data[i] == undefined || this.data[i] == null) {
@@ -52,14 +51,8 @@ export const RemoteModelBase = class {
     }
 
     getDataCount() {
-        if (this.req) {
-            this.req.abort();
-            this.data_row[0] = undefined;
-        }
-
         let url = null;
         const path = this.searchstr;
-        console.log(`getDataCount path=${path}`)
         const int_val = parseInt(path, 10);
         if (isNaN(int_val)) {
             url = `${this.item_count_url}?path=${path}`;
@@ -70,40 +63,43 @@ export const RemoteModelBase = class {
             this.path = null;
             this.category_id = int_val;
         }
-        if (this.h_request != null) {
-            clearTimeout(this.h_request);
-        }
         console.log("getDataCount:");
-        this.h_request = setTimeout(() => {
-            const $ = this.jQuery;
-
-            this.data_row[0] = null; // null indicates a 'requested but not available yet'
-            console.log(`jsonp 2 ${url}`);
-            this.req = $.jsonp({
-                url: url,
-                callbackParameter: "callback",
-                cache: true,
-                success: (json, textStatus, xOptions) => {
-                    this.onSuccessCount(json)
-                },
-                error: (xOptions, textStatus) => {
-                    this.onErrorCount(xOptions, textStatus)
-                }
+        this.onDataLoading.notify({
+        });
+        fetch(url).then( response  => {
+            return response.json();
+        } )
+        .then( (json) => {
+            var count = 0;
+            console.log(`then:${json}`);
+            if (json.length > 0) {
+                //	if (json.count > 0) {
+                const results = json
+                //data.length = 100;
+                //data.length = Math.min(parseInt(results.length),1000); // limitation of the API
+                count = results[0].count
+                this.data_row.length = 1;
+                this.data_row[0] = {
+                    count: count
+                };
+                console.log(`onSuccessCount: 1|${this.data_row[0].count}`);
+            }
+            this.onCountDataLoaded.notify({
+                count: count
             });
-        }, 50);
+        }).catch( error => {
+            console.log( error )
+            this.onCountDataLoaded.notify({
+                count: 0
+            });
+            //alert('remotemodel-base:onErrorCount:error loading');
+        } )
     }
-
     ensureData(from, to) {
         console.log("ensureData");
         console.log(`from=${from}`);
         console.log(`to=${to}`);
         console.log(`this.PAGESIZE=${this.PAGESIZE}`);
-        if (this.req) {
-            this.req.abort();
-            for (let i = this.req.fromPage; i <= this.req.toPage; i++) {
-                this.data[i * this.PAGESIZE] = undefined;
-            }
-        }
 
         if (from < 0) {
             from = 0;
@@ -157,72 +153,37 @@ export const RemoteModelBase = class {
         }
         const url = `${this.item_url}?${part}&start=${recStart}&limit=${recCount}`;
 
-        if (this.h_request != null) {
-            clearTimeout(this.h_request);
+        for (let i = fromPage; i <= toPage; i++) {
+            this.data[i * this.PAGESIZE] = null; // null indicates a 'requested but not available yet'
         }
-        this.h_request = setTimeout(() => {
-            const $ = this.jQuery;
 
-            for (let i = fromPage; i <= toPage; i++) {
-                this.data[i * this.PAGESIZE] = null; // null indicates a 'requested but not available yet'
+        this.onDataLoading.notify({
+            from: from,
+            to: to
+        });
+        console.log(`jsonp 1 url=${url}`);
+        fetch(url).then(response => {
+            return response.json();
+        })
+        .then((json) => {
+            for (let i = 0; i < json.length; i++) {
+                const item = json[i];
+                this.data[from + i] = item;
+                this.data[from + i].index = from + i;
             }
-
-            this.onDataLoading.notify({
+            console.log(`onSuccess`);
+            this.onDataLoaded.notify({
                 from: from,
                 to: to
             });
-            console.log(`jsonp 1 url=${url}`);
-            this.req = $.jsonp({
-                url: url,
-                callbackParameter: "callback",
-                cache: true,
-                success: (json, textStatus, xOptions) => {
-                    console.log("success");
-                    this.onSuccess(json, recStart)
-                },
-                error: (textStatus, xOptions) => {
-                    console.log("error");
-                    this.onError(fromPage, toPage)
-                }
+        }).catch(error => {
+            console.log(error)
+            this.onDataLoaded.notify({
+                from: from,
+                to: to
             });
-
-            this.req.fromPage = fromPage;
-            this.req.toPage = toPage;
-        }, 50);
-    }
-
-    onError(fromPage, toPage) {
-        alert(`remotemodel-base:onError:error loading pages ${fromPage} to ${toPage}`);
-    }
-
-    onSuccess(json, recStart) {}
-
-    onErrorCount(xOptions, textStatus) {
-        console.log(xOptions)
-        console.log(textStatus)
-        alert('remotemodel-base:onErrorCount:error loading');
-    }
-
-    onSuccessCount(json) {
-        let results;
-
-        console.log("onSuccessCount: 0");
-        if (json.length > 0) {
-            //	if (json.count > 0) {
-            results = json
-            //data.length = 100;
-            //data.length = Math.min(parseInt(results.length),1000); // limitation of the API
-            this.data_row.length = 1;
-            this.data_row[0] = {
-                count: results[0].count
-            };
-            console.log(`onSuccessCount: 1|${this.data_row[0].count}`);
-        }
-        this.req = null;
-
-        this.onCountDataLoaded.notify({
-            count: results[0].count
-        });
+            alert(`remotemodel-base:onError:error loading pages ${fromPage} to ${toPage}`);
+        })
     }
 
     reloadData(from, to) {

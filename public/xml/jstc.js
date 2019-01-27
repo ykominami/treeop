@@ -17,8 +17,8 @@ $(document).ready(() => {
 		'#downbtn',
 		'#jquery-ui-autocomplete-input',
 		host,
-		'/xml/bookmarks_count',
-		'/xml/bookmarks',
+		'/xml/bookmarks_count_json',
+		'/xml/bookmarks_json',
 		'/xml/add_bookmark',
 		'/xml/delete_bookmark'
 	);
