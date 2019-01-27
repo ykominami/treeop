@@ -3,7 +3,7 @@ import {
 } from './slick.remotemodel-xml.js';
 
 export const Slickx = class {
-    constructor(jQuery, search_field, sgrid, score, upbtn, downbtn, acinput, host, item_count_url_path, item_url_path, add_item_url_path, delete_item_url_path) {
+    constructor(jQuery, search_field, sgrid, score, upbtn, downbtn, acinput, item_count_url, item_url, add_item_url, delete_item_url) {
         this.jQuery = jQuery;
         const $ = this.jQuery;
         this.selected_cell_row = null;
@@ -15,11 +15,6 @@ export const Slickx = class {
         this.downbtn = downbtn;
         this.acinput = acinput;
 
-        const item_count_url = `${host}${item_count_url_path}`
-        const item_url = `${host}${item_url_path}`
-        const add_item_url = `${host}${add_item_url_path}`
-        const delete_item_url = `${host}${delete_item_url_path}`
-        //    var s;
         this.text_ // FIXME: eld = search_field;
         this.score = score;
         this.page_num = 0;

@@ -63,7 +63,7 @@ export const RemoteModelBase = class {
             this.path = null;
             this.category_id = int_val;
         }
-        console.log("getDataCount:");
+        console.log(`getDataCount: ${url}`);
         this.onDataLoading.notify({
         });
         fetch(url).then( response  => {
